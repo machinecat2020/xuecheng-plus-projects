@@ -27,10 +27,11 @@ import java.util.stream.Collectors;
 @Service
 public class TeachplanServiceImpl implements TeachplanService {
     @Autowired
-    TeachplanMapper teachplanMapper;
-
+    private TeachplanMapper teachplanMapper;
     @Autowired
-    TeachplanMediaMapper teachplanMediaMapper;
+    private TeachplanMediaMapper teachplanMediaMapper;
+    @Autowired
+    private TeachplanService teachplanService;
 
     @Override
     public List<TeachplanDto> findTeachplanTree(long courseId) {
