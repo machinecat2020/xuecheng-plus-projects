@@ -7,14 +7,15 @@ import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
+import com.xuecheng.media.model.po.MediaProcess;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.File;
 import java.util.List;
 
 /**
  * @description 媒资文件管理业务类
- * @author Mr.M
- * @date 2022/9/10 8:55
+ * @author dongguohui
  * @version 1.0
  */
 public interface MediaFileService {
@@ -61,8 +62,7 @@ public interface MediaFileService {
     * @param chunk  分块序号
     * @param localChunkFilePath  分块文件本地路径
     * @return com.xuecheng.base.model.RestResponse
-    * @author Mr.M
-    * @date 2022/9/13 15:50
+    * @author dongguohui
     */
    public RestResponse uploadChunk(String fileMd5,int chunk,String localChunkFilePath);
 
@@ -76,5 +76,34 @@ public interface MediaFileService {
     * @author dongguohui
     */
    public RestResponse mergechunks(Long companyId,String fileMd5,int chunkTotal,UploadFileParamsDto uploadFileParamsDto);
+
+   /**
+    *  开启一个任务
+    * @param id 任务id
+    * @return true开启任务成功，false开启任务失败
+    */
+   public boolean startTask(long id);
+
+   /**
+    * 从minio下载文件
+    *
+    * @param bucket     桶
+    * @param objectName 对象名称
+    * @return 下载后的文件
+    */
+   public File downloadFileFromMinIO(String bucket, String objectName);
+
+   /**
+    * 将文件上传到minio
+    *
+    * @param localFilePath 文件本地路径
+    * @param mimeType      媒体类型
+    * @param bucket        桶
+    * @param objectName    对象名
+    * @return
+    */
+   public boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName);
+
+
 
 }

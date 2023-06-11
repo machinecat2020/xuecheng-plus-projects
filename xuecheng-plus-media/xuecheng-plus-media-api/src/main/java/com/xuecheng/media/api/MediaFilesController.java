@@ -21,7 +21,6 @@ import java.io.IOException;
  * @author Mr.M
  * @version 1.0
  * @description 媒资文件管理接口
- * @date 2022/9/6 11:29
  */
 @Api(value = "媒资文件管理接口", tags = "媒资文件管理接口")
 @RestController

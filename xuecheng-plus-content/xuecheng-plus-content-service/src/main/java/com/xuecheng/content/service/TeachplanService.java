@@ -1,9 +1,12 @@
 package com.xuecheng.content.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xuecheng.content.model.dto.BindTeachplanMediaDto;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
+import com.xuecheng.content.model.po.TeachplanMedia;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -40,4 +43,22 @@ public interface TeachplanService {
      * @return void
      */
     public void moveTeachplanOrder(String move, Long teachplanId);
+
+    /**
+     * @description 教学计划绑定媒资
+     * @param bindTeachplanMediaDto
+     * @return com.xuecheng.content.model.po.TeachplanMedia
+     * @author dongguohui
+     */
+    public TeachplanMedia associationMedia(BindTeachplanMediaDto bindTeachplanMediaDto);
+
+    /**
+     * @description 教学计划_媒资关系绑定解除
+     * @param teachplanId
+     * @param mediaId
+     * @return com.xuecheng.content.model.po.TeachplanMedia
+     * @author dongguohui
+     */
+    public void deleteAssociationMedia(Long teachplanId,String mediaId);
+
 }

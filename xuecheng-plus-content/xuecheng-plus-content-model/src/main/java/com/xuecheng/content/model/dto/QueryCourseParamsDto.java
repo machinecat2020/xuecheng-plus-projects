@@ -5,8 +5,7 @@ import lombok.ToString;
 
 /**
  * @description 课程查询参数Dto
- * @author Mr.M
- * @date 2022/9/6 14:36
+ * @author dongguohui
  * @version 1.0
  */
 @Data
