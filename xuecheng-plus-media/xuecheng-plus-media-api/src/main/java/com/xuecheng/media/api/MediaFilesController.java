@@ -42,31 +42,27 @@ public class MediaFilesController {
     // @RequestPart主要用来处理content-type为multipart/form-data或multipart/mixed stream发起的请求，
     // 可以获取请求中的参数，包括普通文本、文件或复杂对象比如JSON、XML等，针对复杂对象，需要明确对应的content-type。
     @ApiOperation("上传文件")
-    @RequestMapping(value = "/upload/coursefile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,method = RequestMethod.POST)
+    @RequestMapping(value = "/upload/coursefile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public UploadFileResultDto upload(@RequestPart("filedata")MultipartFile filedata, @RequestParam(value = "folder", required = false) String folder, @RequestParam(value = "objectName", required = false) String objectName) throws IOException { // MultipartFile接收文件类
-        Long companyId = 1232141425L;
+    public UploadFileResultDto upload(@RequestPart("filedata")MultipartFile filedata, @RequestParam(value = "objectName", required = false) String objectName) throws IOException { // MultipartFile接收文件类
+        //准备上传文件的信息
         UploadFileParamsDto uploadFileParamsDto = new UploadFileParamsDto();
+        //原始文件名称
+        uploadFileParamsDto.setFilename(filedata.getOriginalFilename());
         //文件大小
         uploadFileParamsDto.setFileSize(filedata.getSize());
-        //图片
+        //文件类型
         uploadFileParamsDto.setFileType("001001");
-        //文件名称
-        uploadFileParamsDto.setFilename(filedata.getOriginalFilename());//文件名称
-        //文件大小
-        long fileSize = filedata.getSize();
-        uploadFileParamsDto.setFileSize(fileSize);
-        //创建临时文件
-        File tempFile = File.createTempFile("minio", "temp");
-        //上传的文件拷贝到临时文件
+        //创建一个临时文件
+        File tempFile = File.createTempFile("minio", ".temp");
         filedata.transferTo(tempFile);
+        Long companyId = 1232141425L;
         //文件路径
-        String absolutePath = tempFile.getAbsolutePath();
-        //上传文件
-        UploadFileResultDto uploadFileResultDto = mediaFileService.uploadFile(companyId, uploadFileParamsDto, absolutePath);
+        String localFilePath = tempFile.getAbsolutePath();
+
+        //调用service上传图片
+        UploadFileResultDto uploadFileResultDto = mediaFileService.uploadFile(companyId, uploadFileParamsDto, localFilePath,objectName);
 
         return uploadFileResultDto;
-
     }
-
 }

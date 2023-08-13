@@ -7,18 +7,20 @@ import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
-import com.xuecheng.media.model.po.MediaProcess;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * @description 媒资文件管理业务类
  * @author dongguohui
- * @version 1.0
  */
 public interface MediaFileService {
+
+   /**
+    * @param mediaId
+    * @return MediaFiles
+    */
+   public MediaFiles getFileById(String mediaId);
 
    /**
     * @description 媒资文件查询方法
@@ -34,10 +36,14 @@ public interface MediaFileService {
     * @param companyId 机构id
     * @param uploadFileParamsDto 上传文件信息
     * @param localFilePath 文件磁盘路径
+    * @param objectName 对象名,传入则按照objectname目录进行上传，否则按照年月日
     * @return 文件信息
     * @author dongguohui
     */
-   public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+   public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath,String objectName);
+
+   public MediaFiles addMediaFilesToDb(Long companyId,String fileMd5,UploadFileParamsDto uploadFileParamsDto,String bucket,String objectName);
+
 
    /**
     * @description 检查文件是否存在
@@ -87,7 +93,7 @@ public interface MediaFileService {
    /**
     * 从minio下载文件
     *
-    * @param bucket     桶
+    * @param bucket 桶
     * @param objectName 对象名称
     * @return 下载后的文件
     */
@@ -100,7 +106,7 @@ public interface MediaFileService {
     * @param mimeType      媒体类型
     * @param bucket        桶
     * @param objectName    对象名
-    * @return
+    * @return boolean
     */
    public boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName);
 

@@ -30,13 +30,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,15 +57,21 @@ public class MediaFileServiceImpl implements MediaFileService {
     private MediaProcessMapper mediaProcessMapper;
 
     @Autowired
-    private MediaFileService mediaFileService;
+    private MediaFileService currentProxy;
 
     //普通文件桶
     @Value("${minio.bucket.files}")
-    private String bucket_files;
+    private String bucket_mediafiles;
 
     //视频文件桶
     @Value("${minio.bucket.videofiles}")
     private String bucket_video;
+
+    @Override
+    public MediaFiles getFileById(String mediaId) {
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(mediaId);
+        return mediaFiles;
+    }
 
     @Override
     public PageResult<MediaFiles> queryMediaFiels(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto) {
@@ -90,32 +94,37 @@ public class MediaFileServiceImpl implements MediaFileService {
     }
 
     @Override
-    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath) {
-        File file = new File(localFilePath);
-        if (!file.exists()) {
-            XueChengPlusException.cast("文件不存在");
-        }
-        //文件名称
+    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath,String objectName) {
+        //文件名
         String filename = uploadFileParamsDto.getFilename();
-        //文件扩展名
+        //先得到扩展名
         String extension = filename.substring(filename.lastIndexOf("."));
-        //文件mimeType
+
+        //得到mimeType
         String mimeType = getMimeType(extension);
-        //文件的md5值
-        String fileMd5 = getFileMd5(file);
-        //文件的默认目录
+
+        //子目录
         String defaultFolderPath = getDefaultFolderPath();
-        //存储到minio中的对象名(带目录)
-        String objectName = defaultFolderPath + fileMd5 + extension;
-        //将文件上传到minio
-        boolean b = addMediaFilesToMinIO(localFilePath, mimeType, bucket_files, objectName);
-        //文件大小
-        uploadFileParamsDto.setFileSize(file.length());
-        //将文件信息存储到数据库
-        MediaFiles mediaFiles = addMediaFilesToDb(companyId, fileMd5, uploadFileParamsDto, bucket_files, objectName);
-        //准备返回数据
+        //文件的md5值
+        String fileMd5 = getFileMd5(new File(localFilePath));
+        if(StringUtils.isEmpty(objectName)){
+            //使用默认年月日去存储
+            objectName = defaultFolderPath+fileMd5+extension;
+        }
+        //上传文件到minio
+        boolean result = addMediaFilesToMinIO(localFilePath, mimeType, bucket_mediafiles, objectName);
+        if(!result){
+            XueChengPlusException.cast("上传文件失败");
+        }
+        //入库文件信息
+        MediaFiles mediaFiles = currentProxy.addMediaFilesToDb(companyId, fileMd5, uploadFileParamsDto, bucket_mediafiles, objectName);
+        if(mediaFiles==null){
+            XueChengPlusException.cast("文件上传后保存信息失败");
+        }
+        //准备返回的对象
         UploadFileResultDto uploadFileResultDto = new UploadFileResultDto();
-        BeanUtils.copyProperties(mediaFiles, uploadFileResultDto);
+        BeanUtils.copyProperties(mediaFiles,uploadFileResultDto);
+
         return uploadFileResultDto;
     }
 
