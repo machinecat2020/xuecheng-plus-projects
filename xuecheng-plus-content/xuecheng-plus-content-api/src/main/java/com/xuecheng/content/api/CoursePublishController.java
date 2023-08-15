@@ -56,6 +56,7 @@ public class CoursePublishController {
         coursePublishService.publish(companyId, courseId);
     }
 
+    // TODO:why url start with r?  // P129 06:00
     @ApiOperation("查询课程发布信息")
     @ResponseBody
     @GetMapping("/r/coursepublish/{courseId}")

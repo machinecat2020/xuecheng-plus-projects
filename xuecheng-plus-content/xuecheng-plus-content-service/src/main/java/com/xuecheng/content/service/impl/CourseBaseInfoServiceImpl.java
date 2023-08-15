@@ -12,16 +12,13 @@ import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.*;
 import com.xuecheng.content.service.CourseBaseInfoService;
-import com.xuecheng.content.service.TeachplanService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -90,7 +87,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
             throw new RuntimeException("新增课程基本信息失败");
         }
         //向课程营销表保存课程营销信息
-        //课程营销信息
+        //更新课程营销信息
         CourseMarket courseMarketNew = new CourseMarket();
         Long courseId = courseBaseNew.getId();
         BeanUtils.copyProperties(addCourseDto, courseMarketNew);
@@ -174,6 +171,9 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         //更新课程基本信息
         int i = courseBaseMapper.updateById(courseBase);
+        if(i<=0){
+            XueChengPlusException.cast("修改课程失败");
+        }
 
         //封装营销信息的数据
         CourseMarket courseMarket = new CourseMarket();

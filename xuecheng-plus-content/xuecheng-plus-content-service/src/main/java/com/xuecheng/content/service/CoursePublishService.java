@@ -53,6 +53,12 @@ public interface CoursePublishService {
     public void  uploadCourseHtml(Long courseId,File file) throws IOException;
 
 
+    /**
+     * @param courseId
+     * @return CoursePublish
+     * @description 根据课程Id查询课程发布情况
+     * @author dongguohui
+     */
     public CoursePublish getCoursePublish(Long courseId);
 
 }

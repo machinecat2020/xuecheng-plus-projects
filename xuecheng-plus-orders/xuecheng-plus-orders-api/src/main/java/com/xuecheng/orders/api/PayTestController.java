@@ -46,7 +46,7 @@ public class PayTestController {
 //        alipayRequest.setReturnUrl("http://domain.com/CallBack/return_url.jsp");
         alipayRequest.setNotifyUrl("http://tjxt-user-t.itheima.net/xuecheng/orders/paynotify");//在公共参数中设置回跳和通知地址
         alipayRequest.setBizContent("{" +
-                "    \"out_trade_no\":\"202303200101020011\"," +
+                "    \"out_trade_no\":\"202303200101020013\"," +
                 "    \"total_amount\":0.1," +
                 "    \"subject\":\"Iphone14 16G\"," +
                 "    \"product_code\":\"QUICK_WAP_WAY\"" +
